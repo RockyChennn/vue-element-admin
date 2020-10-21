@@ -13,9 +13,12 @@ import Layout from '@/layout'
 // import nestedRouter from './modules/nested'
 
 import assetRouter from './modules/assetManagement'
-// import meal from './modules/meal'
-// import sport from './modules/sport'
-// import readingRoom from './modules/readingRoom'
+import canteenRouter from './modules/canteen'
+import sportRouter from './modules/sport'
+import readingRouter from './modules/readingRoom'
+import evaluationRouter from './modules/evaluation'
+import statisticsRouter from './modules/statistics'
+import visitorRouter from './modules/visitorManagement'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -139,7 +142,13 @@ export const asyncRoutes = [
   // chartsRouter,
   // nestedRouter,
   // tableRouter,
+  canteenRouter,
+  sportRouter,
+  readingRouter,
   assetRouter,
+  evaluationRouter,
+  statisticsRouter,
+  visitorRouter,
 
   // {
   //   path: '/permission',

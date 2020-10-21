@@ -3,32 +3,38 @@
 import Layout from '@/layout'
 
 const sportRouter = {
-  path: '/nested',
+  path: '/sportsGoodsManagement',
   component: Layout,
-  redirect: '/nested/menu1/menu1-1',
-  name: '体育用品预约',
+  redirect: '/sportsGoodsManagement/viewList',
+  name: 'SportsGoodsManagement',
   meta: {
-    title: 'nested',
-    icon: 'nested'
+    title: '体育用品管理',
+    icon: 'el-icon-basketball'
   },
   children: [
     {
-      path: 'menu1',
-      component: () => import('@/views/nested/menu1/index'), // Parent router-view
-      name: '物品借用录入',
-      meta: { title: '物品借用录入' }
+      path: 'viewList',
+      name: 'ViewList',
+      component: () => import('@/views/sportsGoodsManagement/viewList/index'),
+      meta: { title: '借用查看' }
     },
     {
-      path: 'menu2',
-      name: '查询记录',
-      component: () => import('@/views/nested/menu2/index'),
-      meta: { title: '查询记录' }
+      path: 'addRecord',
+      name: 'AddRecord',
+      component: () => import('@/views/sportsGoodsManagement/addRecord/index'),
+      meta: { title: '借用录入' }
     },
     {
-      path: 'menu3',
-      name: '提醒设置',
-      component: () => import('@/views/nested/menu3/index'),
-      meta: { title: '提醒设置' }
+      path: 'findItem',
+      name: 'FindItem',
+      component: () => import('@/views/sportsGoodsManagement/findItem/index'),
+      meta: { title: '借阅查询' }
+    },
+    {
+      path: 'reminder',
+      name: 'Reminder',
+      component: () => import('@/views/sportsGoodsManagement/reminder/index'),
+      meta: { title: '逾期提醒' }
     }
   ]
 }

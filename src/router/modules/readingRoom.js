@@ -1,64 +1,50 @@
-/** When your routing table is too long, you can split it into small modules **/
-
 import Layout from '@/layout'
 
 const readingRouter = {
-  path: '/nested',
+  path: '/readingRoomManagement',
   component: Layout,
-  redirect: '/nested/menu1/menu1-1',
-  name: '阅览室管理',
+  redirect: '/readingRoomManagement/addRecord',
+  name: 'ReadingRoomManagement',
   meta: {
-    title: 'nested',
-    icon: 'nested'
+    title: '阅览室管理',
+    icon: 'el-icon-monitor'
   },
   children: [
     {
-      path: 'menu1',
-      component: () => import('@/views/nested/menu1/index'), // Parent router-view
-      name: 'Menu1',
-      meta: { title: 'menu1' },
-      redirect: '/nested/menu1/menu1-1',
-      children: [
-        {
-          path: 'menu1-1',
-          component: () => import('@/views/nested/menu1/menu1-1'),
-          name: 'Menu1-1',
-          meta: { title: 'menu1-1' }
-        },
-        {
-          path: 'menu1-2',
-          component: () => import('@/views/nested/menu1/menu1-2'),
-          name: 'Menu1-2',
-          redirect: '/nested/menu1/menu1-2/menu1-2-1',
-          meta: { title: 'menu1-2' },
-          children: [
-            {
-              path: 'menu1-2-1',
-              component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-              name: 'Menu1-2-1',
-              meta: { title: 'menu1-2-1' }
-            },
-            {
-              path: 'menu1-2-2',
-              component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-              name: 'Menu1-2-2',
-              meta: { title: 'menu1-2-2' }
-            }
-          ]
-        },
-        {
-          path: 'menu1-3',
-          component: () => import('@/views/nested/menu1/menu1-3'),
-          name: 'Menu1-3',
-          meta: { title: 'menu1-3' }
-        }
-      ]
+      path: 'addRecord',
+      name: 'AddRecord',
+      component: () => import('@/views/readingRoomManagement/addRecord/index'),
+      meta: { title: '信息录入' }
     },
     {
-      path: 'menu2',
-      name: 'Menu2',
-      component: () => import('@/views/nested/menu2/index'),
-      meta: { title: 'menu2' }
+      path: 'userRecord',
+      name: 'UserRecord',
+      component: () => import('@/views/readingRoomManagement/useRecord/index'),
+      meta: { title: '使用登记' }
+    },
+    {
+      path: 'freeItem',
+      name: 'FreeItem',
+      component: () => import('@/views/readingRoomManagement/freeItem/index'),
+      meta: { title: '电脑归还' }
+    },
+    {
+      path: 'findItem',
+      name: 'FindItem',
+      component: () => import('@/views/readingRoomManagement/findItem/index'),
+      meta: { title: '检索信息' }
+    },
+    {
+      path: 'statistics',
+      name: 'Statistics',
+      component: () => import('@/views/readingRoomManagement/statistics/index'),
+      meta: { title: '数据统计' }
+    },
+    {
+      path: 'reminder',
+      name: 'Reminder',
+      component: () => import('@/views/readingRoomManagement/reminder/index'),
+      meta: { title: '逾期管理' }
     }
   ]
 }
