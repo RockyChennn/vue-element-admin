@@ -10,7 +10,7 @@ const visitorRouter = {
       name: 'VisitorManagement',
       meta: {
         title: '访客管理',
-        icon: 'el-icon-burger'
+        icon: 'eye-open'
       }
     }
   ]
