@@ -13,7 +13,7 @@
       <template v-if="device !== 'mobile'">
         <!-- <search id="header-search" class="right-menu-item" /> -->
 
-        <error-log class="errLog-container right-menu-item hover-effect" />
+        <!-- <error-log class="errLog-container right-menu-item hover-effect" /> -->
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
@@ -68,7 +68,6 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 
@@ -76,7 +75,6 @@ export default {
   components: {
     Breadcrumb,
     Hamburger,
-    ErrorLog,
     Screenfull,
     SizeSelect
   },

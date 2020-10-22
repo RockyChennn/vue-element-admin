@@ -91,31 +91,6 @@ export const constantRoutes = [
       }
     ]
   }
-  // {
-  //   path: '/documentation',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/documentation/index'),
-  //       name: 'Documentation',
-  //       meta: { title: 'documentation', icon: 'documentation', affix: true }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/guide',
-  //   component: Layout,
-  //   redirect: '/guide/index',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/guide/index'),
-  //       name: 'Guide',
-  //       meta: { title: 'guide', icon: 'guide', noCache: true }
-  //     }
-  //   ]
-  // },
 ]
 
 /**
@@ -137,48 +112,6 @@ export const asyncRoutes = [
   visitorRouter,
 
   // {
-  //   path: '/permission',
-  //   component: Layout,
-  //   redirect: '/permission/page',
-  //   alwaysShow: true, // will always show the root menu
-  //   name: 'Permission',
-  //   meta: {
-  //     title: 'permission',
-  //     icon: 'lock',
-  //     roles: ['admin', 'editor'] // you can set roles in root nav
-  //   },
-  //   children: [
-  //     {
-  //       path: 'page',
-  //       component: () => import('@/views/permission/page'),
-  //       name: 'PagePermission',
-  //       meta: {
-  //         title: 'pagePermission',
-  //         roles: ['admin'] // or you can only set roles in sub nav
-  //       }
-  //     },
-  //     {
-  //       path: 'directive',
-  //       component: () => import('@/views/permission/directive'),
-  //       name: 'DirectivePermission',
-  //       meta: {
-  //         title: 'directivePermission'
-  //         // if do not set roles, means: this page does not require permission
-  //       }
-  //     },
-  //     {
-  //       path: 'role',
-  //       component: () => import('@/views/permission/role'),
-  //       name: 'RolePermission',
-  //       meta: {
-  //         title: 'rolePermission',
-  //         roles: ['admin']
-  //       }
-  //     }
-  //   ]
-  // },
-
-  // {
   //   path: '/icon',
   //   component: Layout,
   //   children: [
@@ -187,42 +120,6 @@ export const asyncRoutes = [
   //       component: () => import('@/views/icons/index'),
   //       name: 'Icons',
   //       meta: { title: 'icons', icon: 'icon', noCache: true }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/example',
-  //   component: Layout,
-  //   redirect: '/example/list',
-  //   name: 'Example',
-  //   meta: {
-  //     title: 'example',
-  //     icon: 'el-icon-s-help'
-  //   },
-  //   children: [
-  //     {
-  //       path: 'create',
-  //       component: () => import('@/views/example/create'),
-  //       name: 'CreateArticle',
-  //       meta: { title: 'createArticle', icon: 'edit' }
-  //     },
-  //     {
-  //       path: 'edit/:id(\\d+)',
-  //       component: () => import('@/views/example/edit'),
-  //       name: 'EditArticle',
-  //       meta: {
-  //         title: 'editArticle',
-  //         noCache: true,
-  //         activeMenu: '/example/list'
-  //       },
-  //       hidden: true
-  //     },
-  //     {
-  //       path: 'list',
-  //       component: () => import('@/views/example/list'),
-  //       name: 'ArticleList',
-  //       meta: { title: 'articleList', icon: 'list' }
   //     }
   //   ]
   // },
@@ -265,44 +162,6 @@ export const asyncRoutes = [
   //   ]
   // },
 
-  // {
-  //   path: '/error-log',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'log',
-  //       component: () => import('@/views/error-log/index'),
-  //       name: 'ErrorLog',
-  //       meta: { title: 'errorLog', icon: 'bug' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/clipboard',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/clipboard/index'),
-  //       name: 'ClipboardDemo',
-  //       meta: { title: 'clipboardDemo', icon: 'clipboard' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/i18n',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/i18n-demo/index'),
-  //       name: 'I18n',
-  //       meta: { title: 'i18n', icon: 'international' }
-  //     }
-  //   ]
-  // },
   // {
   //   path: 'external-link',
   //   component: Layout,
