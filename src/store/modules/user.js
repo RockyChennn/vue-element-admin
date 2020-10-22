@@ -36,8 +36,8 @@ const actions = {
       login({ username: username.trim(), password: password })
         .then(response => {
           const { data } = response
-          commit('SET_TOKEN', data.token)
-          setToken(data.token)
+          commit('SET_TOKEN', data.data.token)
+          setToken(data.data.token)
           resolve()
         })
         .catch(error => {
@@ -52,7 +52,8 @@ const actions = {
       const data = {
         roles: ['admin'],
         introduction: '管理员',
-        avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        // avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        avatar: 'https://s1.ax1x.com/2020/10/22/BiuBoq.png',
         name: 'Admin'
       }
 

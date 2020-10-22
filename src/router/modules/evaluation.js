@@ -9,7 +9,7 @@ const evaluationRouter = {
   name: 'Evaluation',
   meta: {
     title: '评价管理',
-    icon: 'el-icon-burger'
+    icon: 'el-icon-user-solid'
   },
   children: [
     {

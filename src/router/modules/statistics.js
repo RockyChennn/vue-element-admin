@@ -10,7 +10,7 @@ const statisticsRouter = {
       name: 'statistics',
       meta: {
         title: '数据分析平台',
-        icon: 'el-icon-burger'
+        icon: 'el-icon-s-data'
       }
     }
   ]
