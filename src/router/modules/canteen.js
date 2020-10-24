@@ -8,33 +8,21 @@ const canteenRouter = {
   redirect: '/canteen/reservation',
   name: 'CanteenManagement',
   meta: {
-    title: '食堂就餐预约管理',
+    title: '食堂就餐管理',
     icon: 'el-icon-burger'
   },
   children: [
     {
-      path: 'reservation',
-      name: 'Reservation',
-      component: () => import('@/views/canteen/reservation/index'),
-      meta: { title: '新增预约' }
-    },
-    {
-      path: 'viewMenu',
-      name: 'ViewMenu',
-      component: () => import('@/views/canteen/viewMenu/index'),
-      meta: { title: '查看菜单' }
-    },
-    {
       path: 'viewCount',
       name: 'ViewCount',
       component: () => import('@/views/canteen/viewCount/index'),
-      meta: { title: '预约人数' }
+      meta: { title: '预约查看' }
     },
     {
-      path: 'addMenu',
-      name: 'AddMenu',
-      component: () => import('@/views/canteen/addMenu/index'),
-      meta: { title: '添加菜单' }
+      path: 'manageMenu',
+      name: 'ManageMenu',
+      component: () => import('@/views/canteen/manageMenu/index'),
+      meta: { title: '菜单管理' }
     }
   ]
 }

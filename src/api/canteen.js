@@ -1,39 +1,17 @@
 import request from '@/utils/request'
 
-export function viewLatestWeek() {
+// 获取最近七天的预约人数
+export function latestWeekList() {
   return request({
     url: '/meal/order/latestWeek',
     method: 'GET'
   })
 }
 
-export function list(data) {
+// 获取预约记录
+export function orderList(data) {
   return request({
     url: '/meal/order/list',
-    method: 'GET',
-    params: data
-  })
-}
-
-export function addOrder(data) {
-  return request({
-    url: '/meal/order/user/add',
-    method: 'POST',
-    params: data
-  })
-}
-
-export function deleteOrder(data) {
-  return request({
-    url: '/meal/order/user/delete',
-    method: 'POST',
-    params: data
-  })
-}
-
-export function userList(data) {
-  return request({
-    url: '/meal/order/user/list',
     method: 'GET',
     params: data
   })
