@@ -53,7 +53,8 @@ const actions = {
         roles: ['admin'],
         introduction: '管理员',
         // avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-        avatar: 'https://s1.ax1x.com/2020/10/22/BiuBoq.png',
+        // avatar: 'https://s1.ax1x.com/2020/10/22/BiuBoq.png',
+        avatar: 'https://s1.ax1x.com/2020/10/22/BFYSiQ.jpg',
         name: 'Admin'
       }
 

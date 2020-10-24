@@ -105,61 +105,7 @@
           <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.title')" min-width="150px">
-        <template slot-scope="{ row }">
-          <span class="link-type" @click="handleUpdate(row)">{{
-            row.title
-          }}</span>
-          <el-tag>{{ row.type | typeFilter }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.author')" width="110px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-if="showReviewer"
-        :label="$t('table.reviewer')"
-        width="110px"
-        align="center"
-      >
-        <template slot-scope="{ row }">
-          <span style="color:red;">{{ row.reviewer }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.importance')" width="80px">
-        <template slot-scope="{ row }">
-          <svg-icon
-            v-for="n in +row.importance"
-            :key="n"
-            icon-class="star"
-            class="meta-item__icon"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('table.readings')" align="center" width="95">
-        <template slot-scope="{ row }">
-          <span
-            v-if="row.pageviews"
-            class="link-type"
-            @click="handleFetchPv(row.pageviews)"
-            >{{ row.pageviews }}</span
-          >
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.status')"
-        class-name="status-col"
-        width="100"
-      >
-        <template slot-scope="{ row }">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
+
       <el-table-column
         :label="$t('table.actions')"
         align="center"
@@ -200,8 +146,8 @@
     <pagination
       v-show="total > 0"
       :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
+      :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize"
       @pagination="getList"
     />
 
@@ -345,12 +291,8 @@ export default {
       total: 0,
       listLoading: true,
       listQuery: {
-        page: 1,
-        limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        pageNum: 1,
+        pageSize: 20
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
@@ -397,7 +339,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.getList({ pageNum, pageSize })
   },
   methods: {
     getList() {

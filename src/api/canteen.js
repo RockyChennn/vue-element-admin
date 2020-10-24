@@ -1,16 +1,17 @@
 import request from '@/utils/request'
 
-export function viewLatestWeek(data) {
+export function viewLatestWeek() {
   return request({
     url: '/meal/order/latestWeek',
     method: 'GET'
   })
 }
 
-export function list() {
+export function list(data) {
   return request({
     url: '/meal/order/list',
-    method: 'GET'
+    method: 'GET',
+    params: data
   })
 }
 
@@ -30,9 +31,10 @@ export function deleteOrder(data) {
   })
 }
 
-export function userList() {
+export function userList(data) {
   return request({
     url: '/meal/order/user/list',
-    method: 'GET'
+    method: 'GET',
+    params: data
   })
 }
