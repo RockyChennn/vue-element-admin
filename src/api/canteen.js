@@ -31,20 +31,25 @@ export function addMenu(menu) {
   return request({
     url: '/meal/menu/add',
     method: 'POST',
-    params: menu
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: [function(data) {
+      data = JSON.stringify(data)
+      return data
+    }],
+    params: {},
+    data: menu
   })
 }
-// {
-//   "eatDate": "2020-10-27 02:31:52",
-//   "menu": "白菜",
-//   "mperiod": 1
-// }
 
 // 菜单删除
 export function deleteMenu(mid) {
   return request({
     url: '/meal/menu/delete',
     method: 'POST',
-    params: mid
+    params: {
+      'mid': mid
+    }
   })
 }
