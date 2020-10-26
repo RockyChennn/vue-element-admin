@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!-- <el-input
+      <el-input
         v-model="listQuery.title"
         :placeholder="$t('table.title')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
-      /> -->
-      <!-- <el-select
+      />
+      <el-select
         v-model="listQuery.importance"
         :placeholder="$t('table.importance')"
         clearable
@@ -21,8 +21,8 @@
           :label="item"
           :value="item"
         />
-      </el-select> -->
-      <!-- <el-select
+      </el-select>
+      <el-select
         v-model="listQuery.type"
         :placeholder="$t('table.type')"
         clearable
@@ -35,17 +35,15 @@
           :label="item.display_name + '(' + item.key + ')'"
           :value="item.key"
         />
-      </el-select> -->
+      </el-select>
       <el-select
-        v-model="listQuery.fromToday"
-        clearable
-        placeholder="查询类型"
+        v-model="listQuery.sort"
         style="width: 140px"
         class="filter-item"
         @change="handleFilter"
       >
         <el-option
-          v-for="item in queryType"
+          v-for="item in sortOptions"
           :key="item.key"
           :label="item.label"
           :value="item.key"
@@ -69,18 +67,28 @@
       >
         {{ $t('table.add') }}
       </el-button>
+
+      <el-checkbox
+        v-model="showReviewer"
+        class="filter-item"
+        style="margin-left:15px;"
+        @change="tableKey = tableKey + 1"
+      >
+        {{ $t('table.reviewer') }}
+      </el-checkbox>
     </div>
 
     <el-table
-      :key="mid"
+      :key="tableKey"
       v-loading="listLoading"
       :data="list"
       border
       fit
       highlight-current-row
       style="width: 100%;"
+      @sort-change="sortChange"
     >
-      <!-- <el-table-column
+      <el-table-column
         :label="$t('table.id')"
         prop="id"
         sortable="custom"
@@ -91,36 +99,26 @@
         <template slot-scope="{ row }">
           <span>{{ row.id }}</span>
         </template>
-      </el-table-column> -->
-      <el-table-column label="日期" width="150px" align="center">
+      </el-table-column>
+      <el-table-column :label="$t('table.date')" width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.eatDate | parseTime('{y}-{m}-{d}') }}</span>
+          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="时间段" width="150px" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.mperiod === 0 ? '早餐' : row.mperiod === 1 ? '午餐' : '晚餐' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="菜单" align="center">
-        <template slot-scope="{ row }">
-          <span>{{ row.menu }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- <el-table-column label="菜单" min-width="150px">
+      <el-table-column :label="$t('table.title')" min-width="150px">
         <template slot-scope="{ row }">
           <span class="link-type" @click="handleUpdate(row)">{{
             row.title
           }}</span>
+          <el-tag>{{ row.type | typeFilter }}</el-tag>
         </template>
-      </el-table-column> -->
-      <!-- <el-table-column :label="$t('table.author')" width="110px" align="center">
+      </el-table-column>
+      <el-table-column :label="$t('table.author')" width="110px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.author }}</span>
         </template>
-      </el-table-column> -->
-      <!-- <el-table-column
+      </el-table-column>
+      <el-table-column
         v-if="showReviewer"
         :label="$t('table.reviewer')"
         width="110px"
@@ -130,19 +128,27 @@
           <span style="color:red;">{{ row.reviewer }}</span>
         </template>
       </el-table-column>
-
+      <el-table-column :label="$t('table.importance')" width="80px">
+        <template slot-scope="{ row }">
+          <svg-icon
+            v-for="n in +row.importance"
+            :key="n"
+            icon-class="star"
+            class="meta-item__icon"
+          />
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('table.readings')" align="center" width="95">
         <template slot-scope="{ row }">
           <span
             v-if="row.pageviews"
             class="link-type"
             @click="handleFetchPv(row.pageviews)"
-            >{{ row.pageviews }}</span
-          >
+          >{{ row.pageviews }}</span>
           <span v-else>0</span>
         </template>
-      </el-table-column> -->
-      <!-- <el-table-column
+      </el-table-column>
+      <el-table-column
         :label="$t('table.status')"
         class-name="status-col"
         width="100"
@@ -152,18 +158,18 @@
             {{ row.status }}
           </el-tag>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column
-        label="操作"
-        width="100px"
+        :label="$t('table.actions')"
         align="center"
+        width="230"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
-          <!-- <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
-          </el-button> -->
-          <!-- <el-button
+          </el-button>
+          <el-button
             v-if="row.status != 'published'"
             size="mini"
             type="success"
@@ -177,13 +183,14 @@
             @click="handleModifyStatus(row, 'draft')"
           >
             {{ $t('table.draft') }}
-          </el-button> -->
+          </el-button>
           <el-button
+            v-if="row.status != 'deleted'"
             size="mini"
             type="danger"
             @click="handleDelete(row, $index)"
           >
-            删除
+            {{ $t('table.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -192,8 +199,8 @@
     <pagination
       v-show="total > 0"
       :total="total"
-      :page.sync="listQuery.pageNum"
-      :limit.sync="listQuery.pageSize"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
       @pagination="getList"
     />
 
@@ -295,8 +302,7 @@
 </template>
 
 <script>
-// import { menuList, addMenu, deleteMenu } from '@/api/canteen'
-import { menuList } from '@/api/canteen'
+// import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -333,20 +339,23 @@ export default {
   },
   data() {
     return {
-      mid: 0,
+      tableKey: 0,
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
-        pageNum: 1,
-        pageSize: 20,
-        fromToday: 0
+        page: 1,
+        limit: 20,
+        importance: undefined,
+        title: undefined,
+        type: undefined,
+        sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      queryType: [
-        { label: '今后菜单', key: 0 },
-        { label: '全部菜单', key: 1 }
+      sortOptions: [
+        { label: 'ID Ascending', key: '+id' },
+        { label: 'ID Descending', key: '-id' }
       ],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
@@ -391,21 +400,16 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
-      menuList(this.listQuery).then(response => {
-        const {
-          data: {
-            data: { list, pageNum, pageSize, total }
-          }
-        } = response
-        this.list = list
-        this.listQuery.pageNum = pageNum
-        this.listQuery.pageSize = pageSize
-        this.total = total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
+      // this.listLoading = true
+      // fetchList(this.listQuery).then(response => {
+      this.list = []
+      this.total = 0
+
+      //   // Just to simulate the time of the request
+      //   setTimeout(() => {
+      //     this.listLoading = false
+      //   }, 1.5 * 1000)
+      // })
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -417,6 +421,12 @@ export default {
         type: 'success'
       })
       row.status = status
+    },
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop === 'id') {
+        this.sortByID(order)
+      }
     },
     sortByID(order) {
       if (order === 'ascending') {

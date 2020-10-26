@@ -13,12 +13,6 @@ const sportRouter = {
   },
   children: [
     {
-      path: 'viewList',
-      name: 'ViewList',
-      component: () => import('@/views/sportsGoodsManagement/viewList/index'),
-      meta: { title: '借用查看' }
-    },
-    {
       path: 'addRecord',
       name: 'AddRecord',
       component: () => import('@/views/sportsGoodsManagement/addRecord/index'),

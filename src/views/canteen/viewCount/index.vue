@@ -11,7 +11,7 @@
     >
       <el-table-column label="日期" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.date }}</span>
+          <span>{{ row.date || parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="人数" align="center">
@@ -32,7 +32,7 @@
     >
       <el-table-column label="日期" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.odate }}</span>
+          <span>{{ row.odate || parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="姓名" align="center">
@@ -50,7 +50,7 @@
       <el-table-column label="时间段" align="center">
         <template slot-scope="{ row }">
           <span>{{
-            row.operiod === 1 ? '早餐' : row.operiod === 2 ? '午餐' : '晚餐'
+            row.operiod === 0 ? '早餐' : row.operiod === 1 ? '午餐' : '晚餐'
           }}</span>
         </template>
       </el-table-column>
@@ -68,6 +68,7 @@
 
 <script>
 import { latestWeekList, orderList } from '@/api/canteen'
+import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -97,9 +98,9 @@ export default {
         const {
           data: { data }
         } = response
-        data.forEach((item) => {
-          item.date = item.date.split(' ')[0]
-        })
+        // data.forEach((item) => {
+        //   item.date = item.date.split(' ')[0]
+        // })
         this.latestList = data
         setTimeout(() => {
           this.listLoading = false
@@ -116,9 +117,9 @@ export default {
             data: { list, total }
           }
         } = response
-        list.forEach((item) => {
-          item.odate = item.odate.split(' ')[0]
-        })
+        // list.forEach((item) => {
+        //   item.odate = item.odate.split(' ')[0]
+        // })
         this.mealOrderList = list
         this.total = total
         setTimeout(() => {
