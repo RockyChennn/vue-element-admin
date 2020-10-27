@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input
+      <!-- <el-input
         v-model="listQuery.title"
         :placeholder="$t('table.title')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
-      />
-      <el-select
+      /> -->
+      <!-- <el-select
         v-model="listQuery.importance"
         :placeholder="$t('table.importance')"
         clearable
@@ -21,8 +21,8 @@
           :label="item"
           :value="item"
         />
-      </el-select>
-      <el-select
+      </el-select> -->
+      <!-- <el-select
         v-model="listQuery.type"
         :placeholder="$t('table.type')"
         clearable
@@ -35,29 +35,30 @@
           :label="item.display_name + '(' + item.key + ')'"
           :value="item.key"
         />
-      </el-select>
+      </el-select> -->
       <el-select
-        v-model="listQuery.sort"
-        style="width: 140px"
+        v-model="listQuery.fromToday"
+        placeholder="查询类型"
+        style="width: 140px; margin-right: 10px;"
         class="filter-item"
         @change="handleFilter"
       >
         <el-option
-          v-for="item in sortOptions"
+          v-for="item in queryType"
           :key="item.key"
           :label="item.label"
           :value="item.key"
         />
       </el-select>
-      <el-button
+      <!-- <el-button
         v-waves
         class="filter-item"
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
       >
-        {{ $t('table.search') }}
-      </el-button>
+        搜索
+      </el-button> -->
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
@@ -65,58 +66,79 @@
         icon="el-icon-edit"
         @click="handleCreate"
       >
-        {{ $t('table.add') }}
+        添加菜单
       </el-button>
-
-      <el-checkbox
-        v-model="showReviewer"
-        class="filter-item"
-        style="margin-left:15px;"
-        @change="tableKey = tableKey + 1"
-      >
-        {{ $t('table.reviewer') }}
-      </el-checkbox>
     </div>
 
     <el-table
-      :key="tableKey"
+      :key="mid"
       v-loading="listLoading"
       :data="list"
       border
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
-      <el-table-column
-        :label="$t('table.id')"
-        prop="id"
-        sortable="custom"
-        align="center"
-        width="80"
-        :class-name="getSortClass('id')"
-      >
+      <el-table-column label="日期" width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.id }}</span>
+          <span>{{ row.eatDate | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.date')" width="150px" align="center">
+      <el-table-column label="时间段" width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.mperiod === 0 ? '早餐' : row.mperiod === 1 ? '午餐' : '晚餐' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="菜单" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.menu }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        :label="$t('table.actions')"
+      <!-- <el-table-column label="菜单" min-width="150px">
+        <template slot-scope="{ row }">
+          <span class="link-type" @click="handleUpdate(row)">{{
+            row.title
+          }}</span>
+        </template>
+      </el-table-column> -->
+      <!-- <el-table-column :label="$t('table.author')" width="110px" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.author }}</span>
+        </template>
+      </el-table-column> -->
+      <!-- <el-table-column
+        v-if="showReviewer"
+        :label="$t('table.reviewer')"
+        width="110px"
         align="center"
-        width="230"
+      >
+        <template slot-scope="{ row }">
+          <span style="color:red;">{{ row.reviewer }}</span>
+        </template>
+      </el-table-column>-->
+      <!-- <el-table-column
+        :label="$t('table.status')"
+        class-name="status-col"
+        width="100"
+      >
+        <template slot-scope="{ row }">
+          <el-tag :type="row.status | statusFilter">
+            {{ row.status }}
+          </el-tag>
+        </template>
+      </el-table-column> -->
+      <el-table-column
+        label="操作"
+        width="100px"
+        align="center"
         class-name="small-padding fixed-width"
       >
-        <template slot-scope="{ row, $index }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+        <template slot-scope="{ row }">
+          <!-- <el-button type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
-          </el-button>
-          <el-button
+          </el-button> -->
+          <!-- <el-button
             v-if="row.status != 'published'"
             size="mini"
             type="success"
@@ -130,14 +152,13 @@
             @click="handleModifyStatus(row, 'draft')"
           >
             {{ $t('table.draft') }}
-          </el-button>
+          </el-button> -->
           <el-button
-            v-if="row.status != 'deleted'"
             size="mini"
             type="danger"
             @click="handleDelete(row, $index)"
           >
-            {{ $t('table.delete') }}
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -249,7 +270,8 @@
 </template>
 
 <script>
-import { list } from '@/api/canteen'
+// import { menuList, addMenu, deleteMenu } from '@/api/canteen'
+import { menuList } from '@/api/canteen'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -286,31 +308,33 @@ export default {
   },
   data() {
     return {
-      tableKey: 0,
+      mid: 0,
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
         pageNum: 1,
-        pageSize: 20
+        pageSize: 20,
+        fromToday: 0
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
+      queryType: [
+        { label: '全部菜单', key: 0 },
+        { label: '今后菜单', key: 1 }
       ],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        eatDate: new Date(),
+        menu: '',
+        mperiod: 0
       },
+      mperiodType: [
+        { label: '早餐', key: 0 },
+        { label: '午餐', key: 1 },
+        { label: '晚餐', key: 2 }
+      ],
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -339,23 +363,28 @@ export default {
     }
   },
   created() {
-    this.getList({ pageNum, pageSize })
+    this.getList()
   },
   methods: {
     getList() {
       this.listLoading = true
-      list(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
+      menuList(this.listQuery).then(response => {
+        const {
+          data: {
+            data: { list, pageNum, pageSize, total }
+          }
+        } = response
+        this.list = list
+        this.listQuery.pageNum = pageNum
+        this.listQuery.pageSize = pageSize
+        this.total = total
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
       })
     },
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.pageNum = 1
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -364,12 +393,6 @@ export default {
         type: 'success'
       })
       row.status = status
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
     },
     sortByID(order) {
       if (order === 'ascending') {
@@ -404,14 +427,14 @@ export default {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
           // createArticle(this.temp).then(() => {
-          this.list.unshift(this.temp)
-          this.dialogFormVisible = false
-          this.$notify({
-            title: '成功',
-            message: '创建成功',
-            type: 'success',
-            duration: 2000
-          })
+          //   this.list.unshift(this.temp)
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: '成功',
+          //     message: '创建成功',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
           // })
         }
       })
@@ -431,15 +454,15 @@ export default {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           // updateArticle(tempData).then(() => {
-          const index = this.list.findIndex(v => v.id === this.temp.id)
-          this.list.splice(index, 1, this.temp)
-          this.dialogFormVisible = false
-          this.$notify({
-            title: '成功',
-            message: '更新成功',
-            type: 'success',
-            duration: 2000
-          })
+          //   const index = this.list.findIndex(v => v.id === this.temp.id)
+          //   this.list.splice(index, 1, this.temp)
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: '成功',
+          //     message: '更新成功',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
           // })
         }
       })
@@ -447,19 +470,26 @@ export default {
     handleDelete(row, index) {
       this.$notify({
         title: '成功',
-        message: '删除成功',
+        message: '删除成功' + row.mid,
         type: 'success',
         duration: 2000
       })
       this.list.splice(index, 1)
     },
-    handleFetchPv(pv) {
-      // fetchPv(pv).then(response => {
-      //   this.pvData = response.data.pvData
-      //   this.dialogPvVisible = true
-      // })
-    },
-
+    // handleDownload() {
+    //   this.downloadLoading = true
+    //   import('@/vendor/Export2Excel').then(excel => {
+    //     const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
+    //     const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+    //     const data = this.formatJson(filterVal)
+    //     excel.export_json_to_excel({
+    //       header: tHeader,
+    //       data,
+    //       filename: 'table-list'
+    //     })
+    //     this.downloadLoading = false
+    //   })
+    // },
     formatJson(filterVal) {
       return this.list.map(v =>
         filterVal.map(j => {
@@ -470,10 +500,6 @@ export default {
           }
         })
       )
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }
