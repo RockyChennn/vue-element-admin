@@ -21,7 +21,17 @@ export function createDevice(data) {
   return request({
     url: '/device/add',
     method: 'post',
-    params: data
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    transformRequest: [
+      function(data) {
+        data = JSON.stringify(data)
+        return data
+      }
+    ],
+    params: {},
+    data: data
   })
 }
 

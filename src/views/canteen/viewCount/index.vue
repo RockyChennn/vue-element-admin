@@ -20,7 +20,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-divider />
     <el-divider content-position="left">预约记录查询</el-divider>
     <el-table
       v-loading="listLoading"
