@@ -3,7 +3,7 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-all-devices">
-          <svg-icon icon-class="allDevices" class-name="card-panel-icon" />
+          <svg-icon icon-class="list" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">所有设备</div>
@@ -19,7 +19,7 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-move-devices">
-          <svg-icon icon-class="moveDevices" class-name="card-panel-icon" />
+          <svg-icon icon-class="example" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">运行设备</div>
@@ -35,7 +35,7 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-down-devices">
-          <svg-icon icon-class="downDevices" class-name="card-panel-icon" />
+          <svg-icon icon-class="eye" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">故障设备</div>
@@ -51,7 +51,7 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-maintain-devices">
-          <svg-icon icon-class="maintainDevices" class-name="card-panel-icon" />
+          <svg-icon icon-class="star" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">维修设备</div>
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { info } from '@/api/asset'
+import { countInfo } from '@/api/asset'
 import CountTo from 'vue-count-to'
 
 export default {
@@ -84,7 +84,7 @@ export default {
     }
   },
   created() {
-    info(this.listQuery).then(response => {
+    countInfo(this.listQuery).then(response => {
       this.allDevices = response.data.data.allDevices
       this.moveDevices = response.data.data.moveDevices
       this.downDevices = response.data.data.downDevices
@@ -99,8 +99,9 @@ export default {
   margin-top: 18px;
 
   .card-panel-col {
-    margin-bottom: 32px;
+    // margin-bottom: 32px;
   }
+
   .card-panel {
     height: 108px;
     cursor: pointer;
@@ -110,7 +111,8 @@ export default {
     color: #666;
     background: #fff;
     box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
     &:hover {
       .card-panel-icon-wrapper {
         color: #fff;
