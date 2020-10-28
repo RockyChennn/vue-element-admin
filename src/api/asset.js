@@ -74,26 +74,26 @@ export function deleteEmail(data) {
   })
 }
 
-// phone
-export function listPhone(query) {
+// short message
+export function listMessage(query) {
   return request({
-    url: '/device/message/all',
+    url: '/device/phone/list',
     method: 'get',
     params: query
   })
 }
 
-export function createPhone(data) {
+export function createMessage(data) {
   return request({
-    url: '/device/message/add',
+    url: '/device/phone/add',
     method: 'post',
     params: data
   })
 }
 
-export function deletePhone(data) {
+export function deleteMessage(data) {
   return request({
-    url: '/device/message/delete',
+    url: '/device/phone/delete',
     method: 'post',
     params: data
   })

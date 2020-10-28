@@ -15,13 +15,13 @@
     <el-table
       v-loading="listLoading"
       size="small"
-      :data="list"
+      :data="phoneList"
       element-loading-text="正在查询中。。。"
       border
       fit
       highlight-current-row
     >
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         min-width="110px"
         label="编号"
@@ -34,13 +34,13 @@
         min-width="110px"
         label="姓名"
         prop="name"
-      />
+      /> -->
 
       <el-table-column
         align="center"
         min-width="110px"
         label="手机号"
-        prop="phoneNumber"
+        prop="phone"
       />
 
       <el-table-column
@@ -53,7 +53,7 @@
           <el-button
             type="danger"
             size="mini"
-            @click="handleBeforeDelete(scope.row)"
+            @click="handleBeforeDelete(scope.row.phone)"
             >删除</el-button
           >
         </template>
@@ -69,13 +69,6 @@
       </div>
     </el-dialog>
 
-    <!-- 分页 -->
-    <!--     <div class="pagination-container">
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page"
-        :page-sizes="[10,20,30,50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
-      </el-pagination>
-    </div> -->
-
     <!-- 添加或修改对话框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form
@@ -87,11 +80,11 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="姓名" prop="name">
+        <!-- <el-form-item label="姓名" prop="name">
           <el-input v-model="dataForm.name" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="手机号" prop="phoneNumber">
-          <el-input v-model="dataForm.phoneNumber" />
+          <el-input v-model="dataForm.phone" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -107,6 +100,107 @@
   </div>
 </template>
 
+<script>
+import { listMessage, createMessage, deleteMessage } from '@/api/asset'
+
+export default {
+  name: 'ShortMessage',
+  data() {
+    return {
+      phoneList: null,
+      total: undefined,
+      listLoading: true,
+      listQuery: {
+        pageNum: 1,
+        pageSize: 20,
+        phone: ''
+      },
+      dataForm: {
+        name: '',
+        phone: ''
+      },
+      dialogFormVisible: false,
+      dialogStatus: '',
+      textMap: {
+        update: '编辑',
+        create: '添加'
+      },
+      rules: {
+        phone: [{ required: true, message: '电话不能为空', trigger: 'blur' }]
+      },
+      deleteItem: false,
+      deleteTarget: ''
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {
+      this.listLoading = true
+      listMessage(this.listQuery)
+        .then(response => {
+          this.phoneList = response.data.data.list
+          this.listLoading = false
+        })
+        .catch(() => {
+          this.phoneList = []
+          this.listLoading = false
+        })
+    },
+
+    resetForm() {
+      this.dataForm = {
+        phone: ''
+      }
+    },
+
+    handleCreate() {
+      this.resetForm()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+
+    createData() {
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          createMessage(this.dataForm).then(response => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '添加成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
+    },
+    handleBeforeDelete(phone) {
+      this.deleteItem = true
+      this.deleteTarget = phone
+    },
+
+    handleDelete(row) {
+      deleteMessage({ phone: this.deleteTarget }).then(response => {
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.deleteItem = false
+        this.getList()
+      })
+    }
+  }
+}
+</script>
+
 <style>
 .demo-table-expand {
   font-size: 0;
@@ -120,126 +214,3 @@
   margin-bottom: 0;
 }
 </style>
-
-<script>
-import { listPhone, createPhone, deletePhone } from '@/api/asset'
-import waves from '@/directive/waves' // 水波纹指令
-
-export default {
-  name: 'Phone',
-  directives: {
-    waves
-  },
-  data() {
-    return {
-      list: undefined,
-      total: undefined,
-      listLoading: true,
-      listQuery: {
-        pageNum: 1,
-        pageSize: 20,
-        id: '',
-        name: '',
-        phoneNumber: ''
-      },
-      dataForm: {
-        name: '',
-        phoneNumber: ''
-      },
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: '编辑',
-        create: '添加'
-      },
-      rules: {
-        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
-        phoneNumber: [
-          { required: true, message: '电话不能为空', trigger: 'blur' }
-        ]
-      },
-      deleteItem: false
-    }
-  },
-  created() {
-    this.getList()
-  },
-  methods: {
-    getList() {
-      this.listLoading = true
-      listPhone(this.listQuery)
-        .then(response => {
-          this.list = response.data.data
-          this.listLoading = false
-        })
-        .catch(() => {
-          this.list = []
-          this.listLoading = false
-        })
-    },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
-    },
-    handleSizeChange(val) {
-      this.listQuery.limit = val
-      this.getList()
-    },
-    handleCurrentChange(val) {
-      this.listQuery.page = val
-      this.getList()
-    },
-    resetForm() {
-      this.dataForm = {
-        name: '',
-        phoneNumber: ''
-      }
-    },
-    handleCreate() {
-      this.resetForm()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          createPhone(this.dataForm).then(response => {
-            this.list.unshift(response.data.data)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '添加成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleBeforeDelete(row) {
-      this.deleteItem = true
-      this.delteRow = row
-    },
-    handleDelete(row) {
-      this.dataForm = Object.assign({}, this.delteRow)
-      const data = {
-        id: this.dataForm.id
-      }
-      deletePhone(data).then(response => {
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
-        })
-        this.deleteItem = false
-        const index = this.list.indexOf(this.delteRow)
-        this.list.splice(index, 1)
-      })
-    }
-  }
-}
-</script>
