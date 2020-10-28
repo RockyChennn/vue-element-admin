@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <aside>最近一周预约人数</aside>
+    <el-divider content-position="left">最近一周预约人数</el-divider>
     <el-table
       v-loading="listLoading"
       :data="latestList"
@@ -21,7 +21,7 @@
       </el-table-column>
     </el-table>
     <el-divider />
-    <aside>预约记录查询</aside>
+    <el-divider content-position="left">预约记录查询</el-divider>
     <el-table
       v-loading="listLoading"
       :data="mealOrderList"
@@ -93,7 +93,7 @@ export default {
     // 获取最近七天的预约人数
     getLatestWeekList() {
       this.listLoading = true
-      latestWeekList().then((response) => {
+      latestWeekList().then(response => {
         const {
           data: { data }
         } = response
@@ -107,7 +107,7 @@ export default {
     // 获取预约记录
     getOrderList() {
       this.listLoading = true
-      orderList(this.listQuery).then((response) => {
+      orderList(this.listQuery).then(response => {
         const {
           data: {
             data: { list, total }
