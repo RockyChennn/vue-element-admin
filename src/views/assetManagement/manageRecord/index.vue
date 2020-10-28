@@ -8,12 +8,12 @@
             <svg-icon icon-class="list" class-name="card-panel-icon" />
           </div>
           <div class="card-panel-description">
-            <div class="card-panel-text">所有设备</div>
+            <div class="card-panel-text">正常设备</div>
             <count-to
               class="card-panel-num"
               :start-val="0"
-              :end-val="allDevices"
-              :duration="2600"
+              :end-val="workDevices"
+              :duration="2"
             />
           </div>
         </div>
@@ -24,12 +24,12 @@
             <svg-icon icon-class="example" class-name="card-panel-icon" />
           </div>
           <div class="card-panel-description">
-            <div class="card-panel-text">运行设备</div>
+            <div class="card-panel-text">故障设备</div>
             <count-to
               class="card-panel-num"
               :start-val="0"
-              :end-val="moveDevices"
-              :duration="3000"
+              :end-val="blockDevices"
+              :duration="1"
             />
           </div>
         </div>
@@ -40,12 +40,12 @@
             <svg-icon icon-class="eye" class-name="card-panel-icon" />
           </div>
           <div class="card-panel-description">
-            <div class="card-panel-text">故障设备</div>
+            <div class="card-panel-text">维修设备</div>
             <count-to
               class="card-panel-num"
               :start-val="0"
-              :end-val="downDevices"
-              :duration="3200"
+              :end-val="maintainDevices"
+              :duration="1"
             />
           </div>
         </div>
@@ -56,12 +56,12 @@
             <svg-icon icon-class="star" class-name="card-panel-icon" />
           </div>
           <div class="card-panel-description">
-            <div class="card-panel-text">维修设备</div>
+            <div class="card-panel-text">所有设备</div>
             <count-to
               class="card-panel-num"
               :start-val="0"
-              :end-val="maintainDevices"
-              :duration="3600"
+              :end-val="devicesCount"
+              :duration="2"
             />
           </div>
         </div>
@@ -579,10 +579,10 @@ export default {
   },
   data() {
     return {
-      allDevices: 0,
-      moveDevices: 0,
-      downDevices: 0,
+      workDevices: 0,
+      blockDevices: 0,
       maintainDevices: 0,
+      devicesCount: 0,
       list: undefined,
       total: undefined,
       listLoading: true,
@@ -635,14 +635,10 @@ export default {
   },
   created() {
     countInfo().then(response => {
-      // this.allDevices = response.data.data.allDevices
-      // this.moveDevices = response.data.data.moveDevices
-      // this.downDevices = response.data.data.downDevices
-      // this.maintainDevices = response.data.data.maintainDevices
-      this.allDevices = response.data.data[0].count
-      this.moveDevices = response.data.data[0].count
-      this.downDevices = response.data.data[0].count
-      this.maintainDevices = response.data.data[0].count
+      this.workDevices = response.data.data[0].count
+      this.blockDevices = response.data.data[1].count
+      this.maintainDevices = response.data.data[2].count
+      this.devicesCount = response.data.data[3].count
     })
     this.getList()
   },

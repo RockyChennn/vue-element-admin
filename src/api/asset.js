@@ -17,6 +17,15 @@ export function listDevice(query) {
   })
 }
 
+// {
+//   "addDate": 1603891118205,
+//   "address": "北京",
+//   "category": "固定资产",
+//   "deviceName": "string",
+//   "price": 188,
+//   "principal": "小胡",
+//   "status": 0
+// }
 export function createDevice(data) {
   return request({
     url: '/device/add',
@@ -35,6 +44,7 @@ export function createDevice(data) {
   })
 }
 
+// 更新需要在 create 的基础上带上 did
 export function updateDevice(data) {
   return request({
     url: '/device/upload',

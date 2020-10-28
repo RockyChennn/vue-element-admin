@@ -66,25 +66,25 @@
     >
       <el-table-column
         align="center"
-        min-width="45px"
+        min-width="60px"
         label="设备编号"
         prop="did"
       />
       <el-table-column
         align="center"
-        min-width="90px"
+        min-width="60px"
         label="设备名称"
         prop="deviceName"
       />
       <el-table-column
         align="center"
-        min-width="80px"
+        min-width="120px"
         label="申报时间"
         prop="declareTime"
       />
       <el-table-column
         align="center"
-        min-width="90px"
+        min-width="60px"
         label="负责人"
         prop="principal"
       />
@@ -96,7 +96,7 @@
       />
       <el-table-column
         align="center"
-        min-width="90px"
+        min-width="200px"
         label="问题描述"
         prop="troubleDescription"
       />

@@ -62,7 +62,7 @@
     </div>
 
     <el-table
-      :key="mid"
+      :key="rid"
       v-loading="listLoading"
       :data="list"
       border
@@ -70,33 +70,45 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="日期" width="150px" align="center">
+      <el-table-column label="编号" min-width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.eatDate | parseTime('{y}-{m}-{d}') }}</span>
+          <span>{{ row.number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="时间段" width="150px" align="center">
+      <el-table-column label="状态" min-width="200px" align="center">
+        <template slot-scope="{ row }">
+          <span>{{ row.status === 0 ? '空闲' : '使用中' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建日期" min-width="250px" align="center">
         <template slot-scope="{ row }">
           <span>{{
-            row.mperiod === 0 ? '早餐' : row.mperiod === 1 ? '午餐' : '晚餐'
+            row.createTime | parseTime('{y}-{m}-{d} {h}:{m}:{s}')
           }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="菜单" align="center">
+      <el-table-column label="更新日期" min-width="250px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.menu }}</span>
+          <span>{{
+            row.updateTime | parseTime('{y}-{m}-{d} {h}:{m}:{s}')
+          }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="操作"
-        width="100px"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
+
+      <el-table-column label="操作" align="center" min-width="350px">
         <template slot-scope="{ row }">
-          <el-button size="mini" type="danger" @click="handleDelete(row.mid)">
-            删除
-          </el-button>
+          <el-row>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="handleUpdate(row.cid)"
+            >
+              归还
+            </el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(row.cid)">
+              删除
+            </el-button>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>
@@ -117,35 +129,8 @@
         label-width="70px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="时间段" prop="type">
-          <el-select
-            v-model="temp.mperiod"
-            class="filter-item"
-            placeholder="请选择时间段"
-          >
-            <el-option
-              v-for="item in mperiodType"
-              :key="item.key"
-              :label="item.label"
-              :value="item.key"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="日期" prop="timestamp">
-          <el-date-picker
-            v-model="temp.eatDate"
-            type="date"
-            placeholder="请选择日期"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          />
-        </el-form-item>
-        <el-form-item label="菜单">
-          <el-input
-            v-model="temp.menu"
-            :autosize="{ minRows: 3, maxRows: 5 }"
-            type="textarea"
-            placeholder="请输入菜单内容"
-          />
+        <el-form-item label="编号">
+          <el-input v-model="temp.number" placeholder="请输入电脑编号" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -161,12 +146,17 @@
 </template>
 
 <script>
-import { menuList, addMenu, deleteMenu } from '@/api/canteen'
-import { parseTime } from '@/utils/index'
+import {
+  computerList,
+  addItem,
+  deleteItem,
+  // findItem,
+  freeItem
+} from '@/api/reading'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
-  name: 'ManageMenu',
+  name: 'Management',
   components: { Pagination },
   filters: {},
   data() {
@@ -177,23 +167,14 @@ export default {
       listLoading: true,
       listQuery: {
         pageNum: 1,
-        pageSize: 20,
-        fromToday: 0
+        pageSize: 20
       },
-      queryType: [
-        { label: '全部菜单', key: 0 },
-        { label: '今后菜单', key: 1 }
-      ],
       temp: {
-        eatDate: parseTime(new Date()),
-        menu: '',
-        mperiod: 0
+        // eatDate: parseTime(new Date()),
+        // menu: '',
+        number: 0
       },
-      mperiodType: [
-        { label: '早餐', key: 0 },
-        { label: '午餐', key: 1 },
-        { label: '晚餐', key: 2 }
-      ],
+
       dialogFormVisible: false
     }
   },
@@ -203,15 +184,13 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      menuList(this.listQuery).then(response => {
+      computerList(this.listQuery).then(response => {
         const {
           data: {
             data: { list, total }
           }
         } = response
         this.list = list
-        // this.listQuery.pageNum = pageNum
-        // this.listQuery.pageSize = pageSize
         this.total = total
         setTimeout(() => {
           this.listLoading = false
@@ -224,9 +203,7 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        eatDate: parseTime(new Date()),
-        menu: '',
-        mperiod: 0
+        number: null
       }
     },
     handleCreate() {
@@ -239,7 +216,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          addMenu(this.temp).then(() => {
+          addItem(this.temp).then(() => {
             this.handleFilter()
             this.dialogFormVisible = false
             this.$notify({
@@ -252,8 +229,21 @@ export default {
         }
       })
     },
-    handleDelete(mid) {
-      deleteMenu(mid).then(() => {
+
+    handleUpdate(cid) {
+      freeItem(cid).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '归还成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.handleFilter()
+      })
+    },
+
+    handleDelete(cid) {
+      deleteItem(cid).then(() => {
         this.$notify({
           title: '成功',
           message: '删除成功',
