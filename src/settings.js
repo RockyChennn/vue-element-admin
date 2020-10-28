@@ -1,5 +1,5 @@
 module.exports = {
-  title: '校园管理系统',
+  title: '杭铁职工培训中心管理系统',
 
   /**
    * @type {boolean} true | false

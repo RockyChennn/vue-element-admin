@@ -8,6 +8,7 @@
     <sidebar class="sidebar-container" />
     <div :class="{ hasTagsView: needTagsView }" class="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">
+        <div class="title">杭州铁路职工培训管理系统</div>
         <navbar />
         <tags-view v-if="needTagsView" />
       </div>
@@ -96,5 +97,19 @@ export default {
 
 .mobile .fixed-header {
   width: 100%;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 400;
+  // color: #889aa4;
+  color: white;
+  background-color: #314155;
+  text-align: center;
+  font-weight: bold;
+  line-height: 80px;
+  height: 80px;
+  overflow: hidden;
+  border-left: 1px solid #ffffff;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{ height: height, width: width }" />
 </template>
 
 <script>
@@ -52,21 +52,21 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: ['例子1', '例子2', '例子3', '例子4', '例子5']
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '人数占比',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
+              { value: 320, name: '例子1' },
+              { value: 240, name: '例子2' },
+              { value: 149, name: '例子3' },
+              { value: 100, name: '例子4' },
+              { value: 59, name: '例子5' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
