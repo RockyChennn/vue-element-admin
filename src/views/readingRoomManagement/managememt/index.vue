@@ -51,7 +51,16 @@
           <el-row>
             <el-button
               size="mini"
+              type="success"
+              :disabled="row.status === 1"
+              @click="handleUse(row.cid, row.number)"
+            >
+              使用
+            </el-button>
+            <el-button
+              size="mini"
               type="primary"
+              :disabled="row.status === 0"
               @click="handleUpdate(row.cid)"
             >
               归还
@@ -72,7 +81,7 @@
       @pagination="getList"
     />
 
-    <el-dialog title="新增电脑" :visible.sync="dialogFormVisible">
+    <el-dialog title="添加电脑" :visible.sync="dialogFormVisible">
       <el-form
         ref="dataForm"
         :model="temp"
@@ -94,6 +103,55 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="新增使用" :visible.sync="dialogUseFormVisible">
+      <el-form
+        ref="dataForm"
+        :model="record"
+        :rules="rules"
+        label-position="left"
+        label-width="120px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="record.name" placeholder="请输入姓名" />
+        </el-form-item>
+        <!-- <el-form-item label="编号" prop="number">
+          <el-input v-model="record.number" placeholder="请输入电脑编号" />
+        </el-form-item> -->
+        <el-form-item label="电话" prop="phone">
+          <el-input v-model="record.phone" placeholder="请输入电话" />
+        </el-form-item>
+        <el-form-item label="开始时间" prop="startTime">
+          <el-date-picker
+            v-model="record.startTime"
+            clearable
+            style="width: 180px;"
+            placeholder="开始时间"
+            type="datetime"
+            value-format="timestamp"
+          />
+        </el-form-item>
+        <el-form-item label="结束时间" prop="endTime">
+          <el-date-picker
+            v-model="record.endTime"
+            clearable
+            style="width: 180px;"
+            placeholder="结束时间"
+            type="datetime"
+            value-format="timestamp"
+          />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogUseFormVisible = false">
+          放弃添加
+        </el-button>
+        <el-button type="primary" @click="useItem()">
+          确认添加
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -103,7 +161,8 @@ import {
   addItem,
   deleteItem,
   // findItem,
-  freeItem
+  freeItem,
+  addRecord
 } from '@/api/reading'
 import Pagination from '@/components/Pagination'
 
@@ -124,12 +183,28 @@ export default {
       temp: {
         number: 0
       },
+      record: {
+        name: null,
+        number: null,
+        phone: null,
+        startTime: null,
+        endTime: null
+      },
       rules: {
+        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
         number: [
           { required: true, message: '电脑编号不能为空', trigger: 'blur' }
+        ],
+        phone: [{ required: true, message: '电话不能为空', trigger: 'blur' }],
+        startTime: [
+          { required: true, message: '开始时间不能为空', trigger: 'blur' }
+        ],
+        endTime: [
+          { required: true, message: '结束时间不能为空', trigger: 'blur' }
         ]
       },
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      dialogUseFormVisible: false
     }
   },
   created() {
@@ -183,6 +258,45 @@ export default {
         }
       })
     },
+
+    resetTemp() {
+      this.record = {
+        cid: null,
+        name: null,
+        number: null,
+        phone: null,
+        startTime: null,
+        endTime: null
+      }
+    },
+
+    handleUse(cid, number) {
+      this.resetTemp()
+      this.record.cid = cid
+      this.record.number = number
+      this.dialogUseFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+
+    useItem() {
+      this.$refs['dataForm'].validate(valid => {
+        if (valid) {
+          addRecord(this.record).then(() => {
+            this.handleFilter()
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '使用成功',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
+    },
+
     handleUpdate(cid) {
       freeItem({ cid: cid }).then(() => {
         this.$notify({

@@ -48,6 +48,23 @@ export function freeItem(data) {
 //   "phone": "13185529802",
 //   "startTime": 1603941340000
 // }
+// export function addRecord(data) {
+//   return request({
+//     url: '/computer/record/add',
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     transformRequest: [
+//       function(data) {
+//         data = JSON.stringify(data)
+//         return data
+//       }
+//     ],
+//     params: {},
+//     data
+//   })
+// }
 export function addRecord(data) {
   return request({
     url: '/computer/record/add',
