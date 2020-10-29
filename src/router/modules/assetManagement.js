@@ -18,12 +18,6 @@ const assetRouter = {
       component: () => import('@/views/assetManagement/manageRecord/index'),
       meta: { title: '设备管理' }
     },
-    // {
-    //   path: 'addItem',
-    //   name: 'AssetRecord',
-    //   component: () => import('@/views/assetManagement/addItem/index'),
-    //   meta: { title: '设备录入' }
-    // },
     {
       path: 'repairList',
       name: 'RepairList',
