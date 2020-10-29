@@ -1,64 +1,29 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!-- <el-input
-        v-model="listQuery.title"
-        :placeholder="$t('table.title')"
+      <el-input
+        v-model="searchQuery.number"
+        placeholder="电脑编号"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
-      /> -->
-      <!-- <el-select
-        v-model="listQuery.importance"
-        :placeholder="$t('table.importance')"
-        clearable
-        style="width: 90px"
+      />
+      <el-input
+        v-model="searchQuery.name"
+        placeholder="姓名"
+        style="width: 200px;"
         class="filter-item"
-      >
-        <el-option
-          v-for="item in importanceOptions"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
-      </el-select> -->
-      <!-- <el-select
-        v-model="listQuery.type"
-        :placeholder="$t('table.type')"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-date-picker
+        v-model="searchQuery.startTime"
         clearable
         class="filter-item"
-        style="width: 130px"
-      >
-        <el-option
-          v-for="item in calendarTypeOptions"
-          :key="item.key"
-          :label="item.display_name + '(' + item.key + ')'"
-          :value="item.key"
-        />
-      </el-select> -->
-      <!-- <el-select
-        v-model="listQuery.fromToday"
-        placeholder="查询类型"
-        style="width: 140px; margin-right: 10px;"
-        class="filter-item"
-        @change="handleFilter"
-      >
-        <el-option
-          v-for="item in queryType"
-          :key="item.key"
-          :label="item.label"
-          :value="item.key"
-        />
-      </el-select> -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >
-        添加菜单
-      </el-button>
+        style="width: 180px;"
+        placeholder="开始时间"
+        @keyup.enter.native="handleFilter"
+        type="date"
+      />
     </div>
 
     <el-table
@@ -72,22 +37,22 @@
     >
       <el-table-column label="编号" min-width="100px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.number }}</span>
+          <span>{{ row.number || '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="姓名" min-width="100px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.name }}</span>
+          <span>{{ row.name || '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="电话" min-width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.phone }}</span>
+          <span>{{ row.phone || '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="身份证" min-width="150px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.idNumber }}</span>
+          <span>{{ row.idNumber || '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="开始使用时间" min-width="150px" align="center">
@@ -107,7 +72,7 @@
       </el-table-column>
       <el-table-column label="提醒次数" min-width="80px" align="center">
         <template slot-scope="{ row }">
-          <span>{{ row.remindTimes }}</span>
+          <span>{{ row.remindTimes || '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="添加时间" min-width="150px" align="center">
@@ -115,11 +80,12 @@
           <span>{{ row.createTime | parseTime('{m}-{d} {h}:{m}:{s}') }}</span>
         </template>
       </el-table-column>
+      <!--
       <el-table-column label="更新时间" min-width="150px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.updateTime | parseTime('{m}-{d} {h}:{m}:{s}') }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column label="操作" align="center" min-width="150px">
         <template slot-scope="{ row }">
@@ -127,15 +93,19 @@
             <el-button
               size="mini"
               type="primary"
-              @click="beforeOperate(true, row.rid)"
+              @click="handleCreate(row.cid)"
             >
-              归还
+              使用
             </el-button>
             <el-button
               size="mini"
-              type="danger"
-              @click="beforeOperate(false, row.rid)"
+              type="primary"
+              :disabled="row.finishTime !== ''"
+              @click="handleUpdate(row.rid)"
             >
+              归还
+            </el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(row.rid)">
               删除
             </el-button>
           </el-row>
@@ -151,28 +121,39 @@
       @pagination="getList"
     />
 
-    <el-dialog
-      :title="currentOperation === '归还' ? '确认归还' : '确认删除'"
-      :visible.sync="operating"
-    >
-      {{ currentOperation }}操作不可逆，确认{{ currentOperation }}？
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="operating = false">取消</el-button>
-        <el-button type="primary" @click="operate()">确定</el-button>
-      </div>
-    </el-dialog>
-
     <el-dialog title="创建菜单" :visible.sync="dialogFormVisible">
       <el-form
         ref="dataForm"
-        :model="temp"
+        :model="record"
         label-position="left"
         label-width="70px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="编号">
-          <el-input v-model="temp.number" placeholder="请输入电脑编号" />
+        <el-form-item label="姓名">
+          <el-input v-model="record.name" placeholder="请输入姓名" />
         </el-form-item>
+        <el-form-item label="编号">
+          <el-input v-model="record.number" placeholder="请输入电脑编号" />
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="record.phone" placeholder="请输入电话" />
+        </el-form-item>
+        <el-date-picker
+          v-model="record.startTime"
+          clearable
+          class="filter-item"
+          style="width: 180px;"
+          placeholder="开始时间"
+          type="date"
+        />
+        <el-date-picker
+          v-model="record.endTime"
+          clearable
+          class="filter-item"
+          style="width: 180px;"
+          placeholder="结束时间"
+          type="date"
+        />
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -191,11 +172,11 @@ import {
   recordList,
   addRecord,
   deleteRecord,
-  // searchRecord
-  updateRecord
+  updateRecord,
+  searchRecord
 } from '@/api/reading'
 import Pagination from '@/components/Pagination'
-import parseTime from '@/utils/index'
+import { parseTime } from '@/utils/index'
 
 export default {
   name: 'RecordManagement',
@@ -203,7 +184,6 @@ export default {
   filters: {},
   data() {
     return {
-      mid: 0,
       list: null,
       total: 0,
       listLoading: true,
@@ -211,12 +191,20 @@ export default {
         pageNum: 1,
         pageSize: 20
       },
-      temp: {
-        number: 0
+      searchQuery: {
+        pageNum: 1,
+        pageSize: 20,
+        number: null,
+        name: null,
+        startTime: null
       },
-      operating: false,
-      currentOperation: '归还',
-      targetRid: '',
+      record: {
+        name: null,
+        number: null,
+        phone: null,
+        startTime: null,
+        endTime: null
+      },
       dialogFormVisible: false
     }
   },
@@ -239,37 +227,42 @@ export default {
         }, 1.5 * 1000)
       })
     },
+
     handleFilter() {
       this.listQuery.pageNum = 1
       this.getList()
     },
+
+    handleSearch() {
+      this.searchQuery.pageNum = 1
+      searchRecord(this.searchQuery).then(response => {
+        const {
+          data: {
+            data: { list, total }
+          }
+        } = response
+        this.list = list
+        this.total = total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+    },
+
     resetTemp() {
-      this.temp = {
-        number: null
+      this.record = {
+        cid: null,
+        name: null,
+        number: null,
+        phone: null,
+        startTime: null,
+        endTime: null
       }
     },
 
-    beforeOperate(isReturn, rid) {
-      this.operating = true
-      this.targetRid = rid
-      if (isReturn) {
-        this.currentOperation = '归还'
-      } else {
-        this.currentOperation = '删除'
-      }
-    },
-
-    operate() {
-      const { currentOperation, targetRid } = this
-      if (currentOperation === '归还') {
-        this.handleUpdate(targetRid)
-      } else {
-        this.handleDelete(targetRid)
-      }
-    },
-
-    handleCreate() {
+    handleCreate(cid) {
       this.resetTemp()
+      this.cid = cid
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -279,7 +272,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
-          addRecord(this.temp).then(() => {
+          addRecord(this.record).then(() => {
             this.handleFilter()
             this.dialogFormVisible = false
             this.$notify({
@@ -291,11 +284,6 @@ export default {
           })
         }
       })
-    },
-
-    resetData() {
-      this.operating = false
-      this.targetRid = ''
     },
 
     handleUpdate(rid) {
@@ -311,7 +299,6 @@ export default {
           type: 'success',
           duration: 2000
         })
-        this.resetData()
         this.handleFilter()
       })
     },
@@ -324,10 +311,14 @@ export default {
           type: 'success',
           duration: 2000
         })
-        this.resetData()
         this.handleFilter()
       })
     }
   }
 }
 </script>
+<style scoped>
+.filter-item {
+  margin-left: 10px;
+}
+</style>

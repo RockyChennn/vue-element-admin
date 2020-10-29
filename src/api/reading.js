@@ -40,6 +40,14 @@ export function freeItem(data) {
   })
 }
 
+// {
+//   "cid": 1,
+//   "endTime": 1603981340000,
+//   "name": "jiaqi",
+//   "number": "1001",
+//   "phone": "13185529802",
+//   "startTime": 1603941340000
+// }
 export function addRecord(data) {
   return request({
     url: '/computer/record/add',

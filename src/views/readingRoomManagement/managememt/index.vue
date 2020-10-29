@@ -1,55 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!-- <el-input
-        v-model="listQuery.title"
-        :placeholder="$t('table.title')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      /> -->
-      <!-- <el-select
-        v-model="listQuery.importance"
-        :placeholder="$t('table.importance')"
-        clearable
-        style="width: 90px"
-        class="filter-item"
-      >
-        <el-option
-          v-for="item in importanceOptions"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
-      </el-select> -->
-      <!-- <el-select
-        v-model="listQuery.type"
-        :placeholder="$t('table.type')"
-        clearable
-        class="filter-item"
-        style="width: 130px"
-      >
-        <el-option
-          v-for="item in calendarTypeOptions"
-          :key="item.key"
-          :label="item.display_name + '(' + item.key + ')'"
-          :value="item.key"
-        />
-      </el-select> -->
-      <el-select
-        v-model="listQuery.fromToday"
-        placeholder="查询类型"
-        style="width: 140px; margin-right: 10px;"
-        class="filter-item"
-        @change="handleFilter"
-      >
-        <el-option
-          v-for="item in queryType"
-          :key="item.key"
-          :label="item.label"
-          :value="item.key"
-        />
-      </el-select>
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
@@ -57,7 +8,7 @@
         icon="el-icon-edit"
         @click="handleCreate"
       >
-        添加菜单
+        添加电脑
       </el-button>
     </div>
 
@@ -121,15 +72,16 @@
       @pagination="getList"
     />
 
-    <el-dialog title="创建菜单" :visible.sync="dialogFormVisible">
+    <el-dialog title="新增电脑" :visible.sync="dialogFormVisible">
       <el-form
         ref="dataForm"
         :model="temp"
+        :rules="rules"
         label-position="left"
-        label-width="70px"
+        label-width="120px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="编号">
+        <el-form-item label="电脑编号" prop="number">
           <el-input v-model="temp.number" placeholder="请输入电脑编号" />
         </el-form-item>
       </el-form>
@@ -153,7 +105,7 @@ import {
   // findItem,
   freeItem
 } from '@/api/reading'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'Management',
@@ -170,11 +122,13 @@ export default {
         pageSize: 20
       },
       temp: {
-        // eatDate: parseTime(new Date()),
-        // menu: '',
         number: 0
       },
-
+      rules: {
+        number: [
+          { required: true, message: '电脑编号不能为空', trigger: 'blur' }
+        ]
+      },
       dialogFormVisible: false
     }
   },
@@ -217,21 +171,20 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           addItem(this.temp).then(() => {
-            this.handleFilter()
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
-              message: '创建成功',
+              message: '添加电脑成功',
               type: 'success',
               duration: 2000
             })
+            this.handleFilter()
           })
         }
       })
     },
-
     handleUpdate(cid) {
-      freeItem(cid).then(() => {
+      freeItem({ cid: cid }).then(() => {
         this.$notify({
           title: '成功',
           message: '归还成功',
@@ -241,9 +194,8 @@ export default {
         this.handleFilter()
       })
     },
-
     handleDelete(cid) {
-      deleteItem(cid).then(() => {
+      deleteItem({ cid: cid }).then(() => {
         this.$notify({
           title: '成功',
           message: '删除成功',

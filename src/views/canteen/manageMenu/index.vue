@@ -113,11 +113,12 @@
       <el-form
         ref="dataForm"
         :model="temp"
+        :rules="rules"
         label-position="left"
         label-width="70px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="时间段" prop="type">
+        <el-form-item label="时间段" prop="mperiod">
           <el-select
             v-model="temp.mperiod"
             class="filter-item"
@@ -131,7 +132,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="日期" prop="timestamp">
+        <el-form-item label="日期" prop="eatDate">
           <el-date-picker
             v-model="temp.eatDate"
             type="date"
@@ -139,7 +140,7 @@
             value-format="yyyy-MM-dd HH:mm:ss"
           />
         </el-form-item>
-        <el-form-item label="菜单">
+        <el-form-item label="菜单" prop="menu">
           <el-input
             v-model="temp.menu"
             :autosize="{ minRows: 3, maxRows: 5 }"
@@ -163,7 +164,7 @@
 <script>
 import { menuList, addMenu, deleteMenu } from '@/api/canteen'
 import { parseTime } from '@/utils/index'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'ManageMenu',
@@ -187,13 +188,20 @@ export default {
       temp: {
         eatDate: parseTime(new Date()),
         menu: '',
-        mperiod: 0
+        mperiod: ''
       },
       mperiodType: [
         { label: '早餐', key: 0 },
         { label: '午餐', key: 1 },
         { label: '晚餐', key: 2 }
       ],
+      rules: {
+        mperiod: [
+          { required: true, message: '时间段不能为空', trigger: 'blur' }
+        ],
+        eatDate: [{ required: true, message: '日期不能为空', trigger: 'blur' }],
+        menu: [{ required: true, message: '菜单内容不能为空', trigger: 'blur' }]
+      },
       dialogFormVisible: false
     }
   },
